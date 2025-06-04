@@ -7,16 +7,8 @@ private const val RIGHT = 3
 private const val FRONT = 4
 private const val BACK = 5
 
-private const val cWhite: ULong = 0u
-private const val cRed: ULong = 1u
-private const val cGreen: ULong = 2u
-private const val cBlue: ULong = 3u
-private const val cYellow: ULong = 4u
-private const val cOrange: ULong = 5u
-
 class Cube {
     private val ar: Array<Array<Color>> = Array(6) { Array(9){ Color.WHITE} }
-    private val bitAr: Array<ULong> = Array(6) { cWhite }
 
     init {
         init()
