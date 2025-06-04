@@ -7,10 +7,8 @@ fun main() {
 
     var count = 0
     do {
-        cube.l(1)
-        cube.r(1)
+        cube.l(3)
         cube.u(1)
-        cube.d(1)
         count++
     } while (!cube.solved())
     println(count)
