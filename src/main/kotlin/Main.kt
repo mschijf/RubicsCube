@@ -1,16 +1,16 @@
 import ms.cube.Cube
 
 fun main() {
-    val cube = Cube()
+    val cube = Cube.initial()
 
     println(cube.solved())
 
     var count = 0
+    var currentCube = cube
     do {
-        cube.l()
-        cube.d()
+        currentCube = currentCube.l().d()
         count++
-    } while (!cube.solved())
+    } while (!currentCube.solved())
     println(count)
 }
 
