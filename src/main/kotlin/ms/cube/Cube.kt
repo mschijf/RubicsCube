@@ -38,6 +38,13 @@ private const val RIGHT = 3
 private const val FRONT = 4
 private const val BACK = 5
 
+private const val cWhiteFace = 0x00000000U
+private const val cRedFace = 0x11111111U
+private const val cGreenFace = 0x22222222U
+private const val cBlueFace = 0x33333333U
+private const val cYellowFace = 0x44444444U
+private const val cOrangeFace = 0x55555555U
+
 private const val cWhite = 0U
 private const val cRed = 1U
 private const val cGreen = 2U
@@ -45,14 +52,6 @@ private const val cBlue = 3U
 private const val cYellow = 4U
 private const val cOrange = 5U
 
-private val cWhiteFace = (0..7).sumOf {cWhite shl 3*it}
-private val cRedFace = (0..7).sumOf {cRed shl 3*it}
-private val cGreenFace = (0..7).sumOf {cGreen shl 3*it}
-private val cBlueFace = (0..7).sumOf {cBlue shl 3*it}
-private val cYellowFace = (0..7).sumOf {cYellow shl 3*it}
-private val cOrangeFace = (0..7).sumOf {cOrange shl 3*it}
-
-private val faceMask = (0..7).sumOf {7U shl 3*it}
 private val colorFace = listOf(cWhiteFace, cRedFace, cGreenFace, cBlueFace, cYellowFace, cOrangeFace)
 
 
@@ -139,19 +138,19 @@ data class Cube(
 
     private fun Array<UInt>.shift(face1: Int, idx1: Int, face2: Int, idx2: Int, face3: Int, idx3: Int, face4: Int, idx4: Int) {
         val bitAr = this
-        val colorFacelet1 = (bitAr[face1] and (7U shl 3*idx1)) shr (3*idx1)
-        val colorFacelet2 = (bitAr[face2] and (7U shl 3*idx2)) shr (3*idx2)
-        val colorFacelet3 = (bitAr[face3] and (7U shl 3*idx3)) shr (3*idx3)
-        val colorFacelet4 = (bitAr[face4] and (7U shl 3*idx4)) shr (3*idx4)
-        bitAr[face1] = (bitAr[face1] and (7U shl 3*idx1).inv()) or (colorFacelet2 shl 3*idx1)
-        bitAr[face2] = (bitAr[face2] and (7U shl 3*idx2).inv()) or (colorFacelet3 shl 3*idx2)
-        bitAr[face3] = (bitAr[face3] and (7U shl 3*idx3).inv()) or (colorFacelet4 shl 3*idx3)
-        bitAr[face4] = (bitAr[face4] and (7U shl 3*idx4).inv()) or (colorFacelet1 shl 3*idx4)
+        val colorFacelet1 = (bitAr[face1] and (0xFU shl 4*idx1)) shr (4*idx1)
+        val colorFacelet2 = (bitAr[face2] and (0xFU shl 4*idx2)) shr (4*idx2)
+        val colorFacelet3 = (bitAr[face3] and (0xFU shl 4*idx3)) shr (4*idx3)
+        val colorFacelet4 = (bitAr[face4] and (0xFU shl 4*idx4)) shr (4*idx4)
+        bitAr[face1] = (bitAr[face1] and (0xFU shl 4*idx1).inv()) or (colorFacelet2 shl 4*idx1)
+        bitAr[face2] = (bitAr[face2] and (0xFU shl 4*idx2).inv()) or (colorFacelet3 shl 4*idx2)
+        bitAr[face3] = (bitAr[face3] and (0xFU shl 4*idx3).inv()) or (colorFacelet4 shl 4*idx3)
+        bitAr[face4] = (bitAr[face4] and (0xFU shl 4*idx4).inv()) or (colorFacelet1 shl 4*idx4)
     }
 
     private fun UInt.rotateFace(): UInt {
-        val lastOnes = (this and (63U shl 18)) shr 18
-        val shift = this shl 6
-        return (lastOnes or shift) and faceMask
+        val lastOnes = (this and (0xFFU shl 24)) shr 24
+        val shift = this shl 8
+        return (lastOnes or shift)
     }
 }
