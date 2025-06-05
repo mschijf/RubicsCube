@@ -55,7 +55,7 @@ private const val cOrange = 5U
 private val colorFace = listOf(cWhiteFace, cRedFace, cGreenFace, cBlueFace, cYellowFace, cOrangeFace)
 
 
-data class Cube(
+data class Cube private constructor (
     private val bitFaces: List<UInt>) {
 
     companion object {
@@ -137,15 +137,15 @@ data class Cube(
     }
 
     private fun Array<UInt>.shift(face1: Int, idx1: Int, face2: Int, idx2: Int, face3: Int, idx3: Int, face4: Int, idx4: Int) {
-        val bitAr = this
-        val colorFacelet1 = (bitAr[face1] and (0xFU shl 4*idx1)) shr (4*idx1)
-        val colorFacelet2 = (bitAr[face2] and (0xFU shl 4*idx2)) shr (4*idx2)
-        val colorFacelet3 = (bitAr[face3] and (0xFU shl 4*idx3)) shr (4*idx3)
-        val colorFacelet4 = (bitAr[face4] and (0xFU shl 4*idx4)) shr (4*idx4)
-        bitAr[face1] = (bitAr[face1] and (0xFU shl 4*idx1).inv()) or (colorFacelet2 shl 4*idx1)
-        bitAr[face2] = (bitAr[face2] and (0xFU shl 4*idx2).inv()) or (colorFacelet3 shl 4*idx2)
-        bitAr[face3] = (bitAr[face3] and (0xFU shl 4*idx3).inv()) or (colorFacelet4 shl 4*idx3)
-        bitAr[face4] = (bitAr[face4] and (0xFU shl 4*idx4).inv()) or (colorFacelet1 shl 4*idx4)
+        val bitArray = this
+        val clrFacelet1 = (bitArray[face1] and (0xFU shl 4*idx1)) shr (4*idx1)
+        val clrFacelet2 = (bitArray[face2] and (0xFU shl 4*idx2)) shr (4*idx2)
+        val clrFacelet3 = (bitArray[face3] and (0xFU shl 4*idx3)) shr (4*idx3)
+        val clrFacelet4 = (bitArray[face4] and (0xFU shl 4*idx4)) shr (4*idx4)
+        bitArray[face1] = (bitArray[face1] and (0xFU shl 4*idx1).inv()) or (clrFacelet2 shl 4*idx1)
+        bitArray[face2] = (bitArray[face2] and (0xFU shl 4*idx2).inv()) or (clrFacelet3 shl 4*idx2)
+        bitArray[face3] = (bitArray[face3] and (0xFU shl 4*idx3).inv()) or (clrFacelet4 shl 4*idx3)
+        bitArray[face4] = (bitArray[face4] and (0xFU shl 4*idx4).inv()) or (clrFacelet1 shl 4*idx4)
     }
 
     private fun UInt.rotateFace(): UInt {

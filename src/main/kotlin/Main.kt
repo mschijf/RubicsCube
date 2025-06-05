@@ -3,6 +3,7 @@ import ms.cube.Cube
 fun main() {
     val cube = Cube.initial()
 
+    val c = cube.copy()
     println(cube.solved())
 
     var count = 0
