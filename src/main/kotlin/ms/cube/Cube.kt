@@ -63,69 +63,69 @@ data class Cube private constructor (
     }
 
     fun d(n: Int = 1): Cube {
-        val bitAr: Array<UInt> = Array(6) { face -> bitFaces[face] }
+        val bitArray: Array<UInt> = Array(6) { face -> bitFaces[face] }
         repeat (n) {
-            bitAr.shift(FRONT, 6, RIGHT, 6, BACK, 4, LEFT, 4)
-            bitAr.shift(FRONT, 5, RIGHT, 5, BACK, 5, LEFT, 5)
-            bitAr.shift(FRONT, 4, RIGHT, 4, BACK, 6, LEFT, 6)
-            bitAr[DOWN] = bitAr[DOWN].rotateFace()
+            bitArray.shift(FRONT, 6, RIGHT, 6, BACK, 4, LEFT, 4)
+            bitArray.shift(FRONT, 5, RIGHT, 5, BACK, 5, LEFT, 5)
+            bitArray.shift(FRONT, 4, RIGHT, 4, BACK, 6, LEFT, 6)
+            bitArray[DOWN] = bitArray[DOWN].rotateFace()
         }
-        return Cube(bitAr.toList())
+        return Cube(bitArray.toList())
     }
 
     fun u(n: Int = 1): Cube {
-        val bitAr: Array<UInt> = Array(6) { face -> bitFaces[face] }
+        val bitArray: Array<UInt> = Array(6) { face -> bitFaces[face] }
         repeat (n) {
-            bitAr.shift(FRONT, 0, RIGHT, 0, BACK, 2, LEFT, 2)
-            bitAr.shift(FRONT, 1, RIGHT, 1, BACK, 1, LEFT, 1)
-            bitAr.shift(FRONT, 2, RIGHT, 2, BACK, 0, LEFT, 0)
-            bitAr[UP] = bitAr[UP].rotateFace()
+            bitArray.shift(FRONT, 0, RIGHT, 0, BACK, 2, LEFT, 2)
+            bitArray.shift(FRONT, 1, RIGHT, 1, BACK, 1, LEFT, 1)
+            bitArray.shift(FRONT, 2, RIGHT, 2, BACK, 0, LEFT, 0)
+            bitArray[UP] = bitArray[UP].rotateFace()
         }
-        return Cube(bitAr.toList())
+        return Cube(bitArray.toList())
     }
 
     fun f(n: Int = 1): Cube {
-        val bitAr: Array<UInt> = Array(6) { face -> bitFaces[face] }
+        val bitArray: Array<UInt> = Array(6) { face -> bitFaces[face] }
         repeat (n) {
-            bitAr.shift(UP, 6, LEFT, 6, DOWN, 4, RIGHT, 0)
-            bitAr.shift(UP, 5, LEFT, 7, DOWN, 5, RIGHT, 7)
-            bitAr.shift(UP, 4, LEFT, 0, DOWN, 6, RIGHT, 6)
-            bitAr[FRONT] = bitAr[FRONT].rotateFace()
+            bitArray.shift(UP, 6, LEFT, 6, DOWN, 4, RIGHT, 0)
+            bitArray.shift(UP, 5, LEFT, 7, DOWN, 5, RIGHT, 7)
+            bitArray.shift(UP, 4, LEFT, 0, DOWN, 6, RIGHT, 6)
+            bitArray[FRONT] = bitArray[FRONT].rotateFace()
         }
-        return Cube(bitAr.toList())
+        return Cube(bitArray.toList())
     }
 
     fun b(n: Int = 1): Cube {
-        val bitAr: Array<UInt> = Array(6) { face -> bitFaces[face] }
+        val bitArray: Array<UInt> = Array(6) { face -> bitFaces[face] }
         repeat (n) {
-            bitAr.shift(UP, 0, LEFT, 4, DOWN, 2, RIGHT, 2)
-            bitAr.shift(UP, 1, LEFT, 3, DOWN, 1, RIGHT, 3)
-            bitAr.shift(UP, 2, LEFT, 2, DOWN, 0, RIGHT, 4)
-            bitAr[BACK] = bitAr[BACK].rotateFace()
+            bitArray.shift(UP, 0, LEFT, 4, DOWN, 2, RIGHT, 2)
+            bitArray.shift(UP, 1, LEFT, 3, DOWN, 1, RIGHT, 3)
+            bitArray.shift(UP, 2, LEFT, 2, DOWN, 0, RIGHT, 4)
+            bitArray[BACK] = bitArray[BACK].rotateFace()
         }
-        return Cube(bitAr.toList())
+        return Cube(bitArray.toList())
     }
 
     fun l(n: Int = 1): Cube {
-        val bitAr: Array<UInt> = Array(6) { face -> bitFaces[face] }
+        val bitArray: Array<UInt> = Array(6) { face -> bitFaces[face] }
         repeat (n) {
-            bitAr.shift(FRONT, 0, DOWN, 6, BACK, 6, UP, 0)
-            bitAr.shift(FRONT, 7, DOWN, 7, BACK, 7, UP, 7)
-            bitAr.shift(FRONT, 6, DOWN, 0, BACK, 0, UP, 6)
-            bitAr[LEFT] = bitAr[LEFT].rotateFace()
+            bitArray.shift(FRONT, 0, DOWN, 6, BACK, 6, UP, 0)
+            bitArray.shift(FRONT, 7, DOWN, 7, BACK, 7, UP, 7)
+            bitArray.shift(FRONT, 6, DOWN, 0, BACK, 0, UP, 6)
+            bitArray[LEFT] = bitArray[LEFT].rotateFace()
         }
-        return Cube(bitAr.toList())
+        return Cube(bitArray.toList())
     }
 
     fun r(n: Int = 1): Cube {
-        val bitAr: Array<UInt> = Array(6) { face -> bitFaces[face] }
+        val bitArray: Array<UInt> = Array(6) { face -> bitFaces[face] }
         repeat (n) {
-            bitAr.shift(FRONT, 2, DOWN, 4, BACK, 4, UP, 2)
-            bitAr.shift(FRONT, 3, DOWN, 3, BACK, 3, UP, 3)
-            bitAr.shift(FRONT, 4, DOWN, 2, BACK, 2, UP, 4)
-            bitAr[RIGHT] = bitAr[RIGHT].rotateFace()
+            bitArray.shift(FRONT, 2, DOWN, 4, BACK, 4, UP, 2)
+            bitArray.shift(FRONT, 3, DOWN, 3, BACK, 3, UP, 3)
+            bitArray.shift(FRONT, 4, DOWN, 2, BACK, 2, UP, 4)
+            bitArray[RIGHT] = bitArray[RIGHT].rotateFace()
         }
-        return Cube(bitAr.toList())
+        return Cube(bitArray.toList())
     }
 
     fun solved(): Boolean {

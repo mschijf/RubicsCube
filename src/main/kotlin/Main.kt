@@ -13,5 +13,16 @@ fun main() {
         count++
     } while (currentCube != cube)
     println(count)
+
+
+    val startTime = System.currentTimeMillis()
+    println("start calculating")
+    repeat(1000_000_000) {
+        currentCube = currentCube.l()
+    }
+    val timePassed = System.currentTimeMillis() - startTime
+    print("Done in %d.%03d sec".format(timePassed / 1000, timePassed % 1000))
+    println()
+
 }
 
