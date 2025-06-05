@@ -60,9 +60,7 @@ class Cube(
     private val bitFaces: List<UInt>) {
 
     companion object {
-        fun initial() : Cube {
-            return Cube(colorFace  )
-        }
+        fun initial() = Cube(colorFace)
     }
 
 
@@ -72,7 +70,7 @@ class Cube(
             bitAr.shift(FRONT, 6, RIGHT, 6, BACK, 4, LEFT, 4)
             bitAr.shift(FRONT, 5, RIGHT, 5, BACK, 5, LEFT, 5)
             bitAr.shift(FRONT, 4, RIGHT, 4, BACK, 6, LEFT, 6)
-            bitAr.rotateFace(DOWN)
+            bitAr[DOWN] = bitAr[DOWN].rotateFace()
         }
         return Cube(bitAr.toList())
     }
@@ -83,7 +81,7 @@ class Cube(
             bitAr.shift(FRONT, 0, RIGHT, 0, BACK, 2, LEFT, 2)
             bitAr.shift(FRONT, 1, RIGHT, 1, BACK, 1, LEFT, 1)
             bitAr.shift(FRONT, 2, RIGHT, 2, BACK, 0, LEFT, 0)
-            bitAr.rotateFace(UP)
+            bitAr[UP] = bitAr[UP].rotateFace()
         }
         return Cube(bitAr.toList())
     }
@@ -94,7 +92,7 @@ class Cube(
             bitAr.shift(UP, 6, LEFT, 6, DOWN, 4, RIGHT, 0)
             bitAr.shift(UP, 5, LEFT, 7, DOWN, 5, RIGHT, 7)
             bitAr.shift(UP, 4, LEFT, 0, DOWN, 6, RIGHT, 6)
-            bitAr.rotateFace(FRONT)
+            bitAr[FRONT] = bitAr[FRONT].rotateFace()
         }
         return Cube(bitAr.toList())
     }
@@ -105,7 +103,7 @@ class Cube(
             bitAr.shift(UP, 0, LEFT, 4, DOWN, 2, RIGHT, 2)
             bitAr.shift(UP, 1, LEFT, 3, DOWN, 1, RIGHT, 3)
             bitAr.shift(UP, 2, LEFT, 2, DOWN, 0, RIGHT, 4)
-            bitAr.rotateFace(BACK)
+            bitAr[BACK] = bitAr[BACK].rotateFace()
         }
         return Cube(bitAr.toList())
     }
@@ -116,7 +114,7 @@ class Cube(
             bitAr.shift(FRONT, 0, DOWN, 6, BACK, 6, UP, 0)
             bitAr.shift(FRONT, 7, DOWN, 7, BACK, 7, UP, 7)
             bitAr.shift(FRONT, 6, DOWN, 0, BACK, 0, UP, 6)
-            bitAr.rotateFace(LEFT)
+            bitAr[LEFT] = bitAr[LEFT].rotateFace()
         }
         return Cube(bitAr.toList())
     }
@@ -127,7 +125,7 @@ class Cube(
             bitAr.shift(FRONT, 2, DOWN, 4, BACK, 4, UP, 2)
             bitAr.shift(FRONT, 3, DOWN, 3, BACK, 3, UP, 3)
             bitAr.shift(FRONT, 4, DOWN, 2, BACK, 2, UP, 4)
-            bitAr.rotateFace(RIGHT)
+            bitAr[RIGHT] = bitAr[RIGHT].rotateFace()
         }
         return Cube(bitAr.toList())
     }
@@ -152,10 +150,9 @@ class Cube(
         bitAr[face4] = (bitAr[face4] and (7U shl 3*idx4).inv()) or (colorFacelet1 shl 3*idx4)
     }
 
-    private fun Array<UInt>.rotateFace(face: Int) {
-        val bitAr = this
-        val lastOnes = (bitAr[face] and (63U shl 18)) shr 18
-        val shift = bitAr[face] shl 6
-        bitAr[face] = (lastOnes or shift) and faceMask
+    private fun UInt.rotateFace(): UInt {
+        val lastOnes = (this and (63U shl 18)) shr 18
+        val shift = this shl 6
+        return (lastOnes or shift) and faceMask
     }
 }
