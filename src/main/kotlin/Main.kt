@@ -10,7 +10,7 @@ fun main() {
     do {
         currentCube = currentCube.l().d()
         count++
-    } while (!currentCube.solved())
+    } while (currentCube != cube)
     println(count)
 }
 

@@ -4,7 +4,7 @@ package ms.cube
  *                   +---+---+---+
  *                   | 0 | 1 | 2 |
  *                   +---+---+---+
- *                   | 7 | 8 | 3 |
+ *                   | 7 |   | 3 |
  *                   +---+---+---+
  *                   | 6 | 5 | 4 |
  *                   +---+---+---+
@@ -13,7 +13,7 @@ package ms.cube
  *  +---+---+---+    +---+---+---+    +---+---+---+    +---+---+---+
  *  | 2 | 1 | 0 |    | 0 | 1 | 2 |    | 0 | 1 | 2 |    | 2 | 1 | 0 |
  *  +---+---+---+    +---+---+---+    +---+---+---+    +---+---+---+
- *  | 3 | 8 | 7 |    | 7 | 8 | 3 |    | 7 | 8 | 3 |    | 3 | 8 | 7 |
+ *  | 3 |   | 7 |    | 7 |   | 3 |    | 7 |   | 3 |    | 3 |   | 7 |
  *  +---+---+---+    +---+---+---+    +---+---+---+    +---+---+---+
  *  | 4 | 5 | 6 |    | 6 | 5 | 4 |    | 6 | 5 | 4 |    | 4 | 5 | 6 |
  *  +---+---+---+    +---+---+---+    +---+---+---+    +---+---+---+
@@ -21,7 +21,7 @@ package ms.cube
  *                   +---+---+---+
  *                   | 6 | 5 | 4 |
  *                   +---+---+---+
- *                   | 7 | 8 | 3 |
+ *                   | 7 |   | 3 |
  *                   +---+---+---+
  *                   | 0 | 1 | 2 |
  *                   +---+---+---+
@@ -56,13 +56,12 @@ private val faceMask = (0..7).sumOf {7U shl 3*it}
 private val colorFace = listOf(cWhiteFace, cRedFace, cGreenFace, cBlueFace, cYellowFace, cOrangeFace)
 
 
-class Cube(
+data class Cube(
     private val bitFaces: List<UInt>) {
 
     companion object {
         fun initial() = Cube(colorFace)
     }
-
 
     fun d(n: Int = 1): Cube {
         val bitAr: Array<UInt> = Array(6) { face -> bitFaces[face] }
@@ -131,11 +130,11 @@ class Cube(
     }
 
     fun solved(): Boolean {
-        return (0..5).all{face -> faceSolved(face)}
+        return bitFaces == colorFace
     }
 
     fun faceSolved(face: Int): Boolean {
-        return bitFaces == colorFace
+        return bitFaces[face] == colorFace[face]
     }
 
     private fun Array<UInt>.shift(face1: Int, idx1: Int, face2: Int, idx2: Int, face3: Int, idx3: Int, face4: Int, idx4: Int) {
