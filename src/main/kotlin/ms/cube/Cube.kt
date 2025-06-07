@@ -1,65 +1,59 @@
 package ms.cube
 
-/*                        UP
- *                   +---+---+---+
- *                   | 0 | 1 | 2 |
- *                   +---+---+---+
- *                   | 7 |   | 3 |
- *                   +---+---+---+
- *                   | 6 | 5 | 4 |
- *                   +---+---+---+
+/*                        UP.                               UP'
+ *                   +---+---+---+                     +---+---+---+
+ *                   | 0 | 1 | 2 |                     | 2 | 1 | 0 |
+ *                   +---+---+---+                     +---+---+---+
+ *                   | 7 |   | 3 |                     | 3 |   | 7 |
+ *                   +---+---+---+                     +---+---+---+
+ *                   | 6 | 5 | 4 |                     | 2 | 1 | 0 |
+ *                   +---+---+---+                     +---+---+---+
  *
- *       LEFT            FRONT            RIGHT            BACK
- *  +---+---+---+    +---+---+---+    +---+---+---+    +---+---+---+
- *  | 2 | 1 | 0 |    | 0 | 1 | 2 |    | 0 | 1 | 2 |    | 2 | 1 | 0 |
- *  +---+---+---+    +---+---+---+    +---+---+---+    +---+---+---+
- *  | 3 |   | 7 |    | 7 |   | 3 |    | 7 |   | 3 |    | 3 |   | 7 |
- *  +---+---+---+    +---+---+---+    +---+---+---+    +---+---+---+
- *  | 4 | 5 | 6 |    | 6 | 5 | 4 |    | 6 | 5 | 4 |    | 4 | 5 | 6 |
- *  +---+---+---+    +---+---+---+    +---+---+---+    +---+---+---+
+ *       LEFT            FRONT            RIGHT            BACK  .          LEFT'
+ *  +---+---+---+    +---+---+---+    +---+---+---+    +---+---+---+   +---+---+---+
+ *  | 2 | 1 | 0 |    | 0 | 1 | 2 |    | 0 | 1 | 2 |    | 2 | 1 | 0 |   | 2 | 1 | 0 |
+ *  +---+---+---+    +---+---+---+    +---+---+---+    +---+---+---+   +---+---+---+
+ *  | 3 |   | 7 |    | 7 |   | 3 |    | 7 |   | 3 |    | 3 |   | 7 |   | 3 |   | 7 |
+ *  +---+---+---+    +---+---+---+    +---+---+---+    +---+---+---+   +---+---+---+
+ *  | 4 | 5 | 6 |    | 6 | 5 | 4 |    | 6 | 5 | 4 |    | 4 | 5 | 6 |   | 4 | 5 | 6 |
+ *  +---+---+---+    +---+---+---+    +---+---+---+    +---+---+---+   +---+---+---+
  *
- *                   +---+---+---+
- *                   | 6 | 5 | 4 |
- *                   +---+---+---+
- *                   | 7 |   | 3 |
- *                   +---+---+---+
- *                   | 0 | 1 | 2 |
- *                   +---+---+---+
- *                       DOWN
+ *                   +---+---+---+                     +---+---+---+
+ *                   | 6 | 5 | 4 |                     | 2 | 1 | 0 |
+ *                   +---+---+---+                     +---+---+---+
+ *                   | 7 |   | 3 |                     | 3 |   | 7 |
+ *                   +---+---+---+                     +---+---+---+
+ *                   | 0 | 1 | 2 |                     | 4 | 5 | 6 |
+ *                   +---+---+---+                     +---+---+---+
+ *                       DOWN                              DOWN'
  *
  *
  */
 
 
-private const val DOWN = 0
-private const val UP = 1
-private const val LEFT = 2
-private const val RIGHT = 3
-private const val FRONT = 4
-private const val BACK = 5
 
-private const val cWhiteFace = 0x00000000U
-private const val cRedFace = 0x11111111U
-private const val cGreenFace = 0x22222222U
-private const val cBlueFace = 0x33333333U
-private const val cYellowFace = 0x44444444U
-private const val cOrangeFace = 0x55555555U
+const val WHITE = 0x0
+const val ORANGE = 0x1
+const val RED = 0x2
+const val GREEN = 0x3
+const val BLUE = 0x4
+const val YELLOW = 0x5
 
-private const val cWhite = 0U
-private const val cRed = 1U
-private const val cGreen = 2U
-private const val cBlue = 3U
-private const val cYellow = 4U
-private const val cOrange = 5U
+const val FRONT = 0
+const val BACK = 1
+const val LEFT = 2
+const val RIGHT = 3
+const val UP = 4
+const val DOWN = 5
 
-private val colorFace = listOf(cWhiteFace, cRedFace, cGreenFace, cBlueFace, cYellowFace, cOrangeFace)
+val startFaceColor = listOf(WHITE, ORANGE, RED, GREEN, BLUE, YELLOW).sorted()
+val initial = startFaceColor.map { clr -> (0..7).sumOf {clr.toUInt() shl 4*it} }
 
-
-data class Cube private constructor (
-    private val bitFaces: List<UInt>) {
+data class Cube (
+    val bitFaces: List<UInt>) {
 
     companion object {
-        fun initial() = Cube(colorFace)
+        fun initial() = Cube(initial)
     }
 
     fun d(n: Int = 1): Cube {
@@ -128,12 +122,16 @@ data class Cube private constructor (
         return Cube(bitArray.toList())
     }
 
+    fun onlyCornerFields(): Cube {
+        return Cube(bitFaces.map { it and 0x0F0F0F0FU })
+    }
+
     fun solved(): Boolean {
-        return bitFaces == colorFace
+        return bitFaces == initial
     }
 
     fun faceSolved(face: Int): Boolean {
-        return bitFaces[face] == colorFace[face]
+        return bitFaces[face] == initial[face]
     }
 
     private fun Array<UInt>.shift(face1: Int, idx1: Int, face2: Int, idx2: Int, face3: Int, idx3: Int, face4: Int, idx4: Int) {
@@ -152,5 +150,13 @@ data class Cube private constructor (
         val lastOnes = (this and (0xFFU shl 24)) shr 24
         val shift = this shl 8
         return (lastOnes or shift)
+    }
+
+    override fun toString(): String {
+        return "[" + bitFaces.joinToString(", "){it.toString(16)} +" ]"
+    }
+
+    fun getColor(face: Int, idx: Int): Int {
+        return ((bitFaces[face] and (0xFU shl (4*idx))) shr (4*idx)).toInt()
     }
 }
