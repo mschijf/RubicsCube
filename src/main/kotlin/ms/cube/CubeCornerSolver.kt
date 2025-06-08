@@ -10,30 +10,30 @@ class CubeCornerSolver {
 
     private fun Cube.getCornerCubieIndex(): Int {
         val cornerCubieList = listOf(
-            CubeIndex.cornerCubieIndex[this.getColor(FRONT, 0)][this.getColor(LEFT, 0)][this.getColor(UP, 6)],
-            CubeIndex.cornerCubieIndex[this.getColor(FRONT, 2)][this.getColor(RIGHT, 0)][this.getColor(UP, 4)],
-            CubeIndex.cornerCubieIndex[this.getColor(FRONT, 6)][this.getColor(LEFT, 6)][this.getColor(DOWN, 6)],
-            CubeIndex.cornerCubieIndex[this.getColor(FRONT, 4)][this.getColor(RIGHT, 6)][this.getColor(DOWN, 4)],
+            CubeIndex.cornerCubieIndex[getColor(Cube.FRONT, 0)][getColor(Cube.LEFT, 0)][getColor(Cube.UP, 6)],
+            CubeIndex.cornerCubieIndex[getColor(Cube.FRONT, 2)][getColor(Cube.RIGHT, 0)][getColor(Cube.UP, 4)],
+            CubeIndex.cornerCubieIndex[getColor(Cube.FRONT, 6)][getColor(Cube.LEFT, 6)][getColor(Cube.DOWN, 6)],
+            CubeIndex.cornerCubieIndex[getColor(Cube.FRONT, 4)][getColor(Cube.RIGHT, 6)][getColor(Cube.DOWN, 4)],
 
-            CubeIndex.cornerCubieIndex[this.getColor(BACK, 0)][this.getColor(LEFT, 2)][this.getColor(UP, 0)],
-            CubeIndex.cornerCubieIndex[this.getColor(BACK, 2)][this.getColor(RIGHT, 2)][this.getColor(UP, 2)],
-            CubeIndex.cornerCubieIndex[this.getColor(BACK, 6)][this.getColor(LEFT, 4)][this.getColor(DOWN, 0)],
-            CubeIndex.cornerCubieIndex[this.getColor(BACK, 4)][this.getColor(RIGHT, 4)][this.getColor(DOWN, 2)]
+            CubeIndex.cornerCubieIndex[getColor(Cube.BACK, 0)][getColor(Cube.LEFT, 2)][getColor(Cube.UP, 0)],
+            CubeIndex.cornerCubieIndex[getColor(Cube.BACK, 2)][getColor(Cube.RIGHT, 2)][getColor(Cube.UP, 2)],
+            CubeIndex.cornerCubieIndex[getColor(Cube.BACK, 6)][getColor(Cube.LEFT, 4)][getColor(Cube.DOWN, 0)],
+            CubeIndex.cornerCubieIndex[getColor(Cube.BACK, 4)][getColor(Cube.RIGHT, 4)][getColor(Cube.DOWN, 2)]
         )
         return permutationIndex(cornerCubieList)
     }
 
     private fun Cube.getCornerCubieOrienationIndex(): Int {
         val orientationList = listOf(
-            CubeIndex.orientationIndex[this.getColor(FRONT, 0)][this.getColor(LEFT, 0)][this.getColor(UP, 6)],
-            CubeIndex.orientationIndex[this.getColor(FRONT, 2)][this.getColor(RIGHT, 0)][this.getColor(UP, 4)],
-            CubeIndex.orientationIndex[this.getColor(FRONT, 6)][this.getColor(LEFT, 6)][this.getColor(DOWN, 6)],
-            CubeIndex.orientationIndex[this.getColor(FRONT, 4)][this.getColor(RIGHT, 6)][this.getColor(DOWN, 4)],
+            CubeIndex.orientationIndex[getColor(Cube.FRONT, 0)][getColor(Cube.LEFT, 0)][getColor(Cube.UP, 6)],
+            CubeIndex.orientationIndex[getColor(Cube.FRONT, 2)][getColor(Cube.RIGHT, 0)][getColor(Cube.UP, 4)],
+            CubeIndex.orientationIndex[getColor(Cube.FRONT, 6)][getColor(Cube.LEFT, 6)][getColor(Cube.DOWN, 6)],
+            CubeIndex.orientationIndex[getColor(Cube.FRONT, 4)][getColor(Cube.RIGHT, 6)][getColor(Cube.DOWN, 4)],
 
-            CubeIndex.orientationIndex[this.getColor(BACK, 0)][this.getColor(LEFT, 2)][this.getColor(UP, 0)],
-            CubeIndex.orientationIndex[this.getColor(BACK, 2)][this.getColor(RIGHT, 2)][this.getColor(UP, 2)],
-            CubeIndex.orientationIndex[this.getColor(BACK, 6)][this.getColor(LEFT, 4)][this.getColor(DOWN, 0)],
-//            CubeIndex.orientationIndex[this.getColor(BACK, 4)][this.getColor(RIGHT, 4)][this.getColor(DOWN, 2)]
+            CubeIndex.orientationIndex[getColor(Cube.BACK, 0)][getColor(Cube.LEFT, 2)][getColor(Cube.UP, 0)],
+            CubeIndex.orientationIndex[getColor(Cube.BACK, 2)][getColor(Cube.RIGHT, 2)][getColor(Cube.UP, 2)],
+            CubeIndex.orientationIndex[getColor(Cube.BACK, 6)][getColor(Cube.LEFT, 4)][getColor(Cube.DOWN, 0)],
+//            CubeIndex.orientationIndex[getColor(Cube.BACK, 4)][getColor(Cube.RIGHT, 4)][getColor(Cube.DOWN, 2)]
         )
         return powerIndex(orientationList)
     }
@@ -62,6 +62,7 @@ class CubeCornerSolver {
     }
 
     fun powerIndex(list: List<Int>): Int {
+//        return list.reduce { acc, i -> acc * 3 + i } --> slower
         var result = 0
         list.forEach { i ->
             result = result*3 + i
@@ -113,7 +114,7 @@ class CubeCornerSolver {
         val timePassed = System.currentTimeMillis() - startTime
         println()
         println()
-        print("All done in %d.%03d sec".format(timePassed / 1000, timePassed % 1000))
+        println("All done in %d.%03d sec".format(timePassed / 1000, timePassed % 1000))
         println("max moves: $max")
         println("Stored in pattern: $inPattern")
         println("start printing errors")
@@ -127,16 +128,16 @@ class CubeCornerSolver {
         println("all printed")
         println("max moves (recalculated): $max")
     }
-
-    fun Cube.successorCubes(): List<Cube> {
-        return listOf(
-            this.l(), this.r(), this.d(), this.u(), this.f(), this.b(),
-            this.l(2), this.r(2), this.d(2), this.u(2), this.f(2), this.b(2),
-            this.l(3), this.r(3), this.d(3), this.u(3), this.f(3), this.b(3)
-        )
-    }
 }
 
 //Done in 468.782 sec
 //Done in 482.762 sec
 //Done in 455.283 sec
+//All done in 449.640 sec
+
+//cubes examined:  3.000.000  in pattern:  13.823.140 in queue:  10.823.140 maxMoves: 7 (13.803 sec)  3.912.193 cubes/sec
+//cubes examined:  3.000.000  in pattern:  13.823.140 in queue:  10.823.140 maxMoves: 7 (13.464 sec)  4.010.695 cubes/sec
+
+//cubes examined:  3.000.000  in pattern:  13.823.140 in queue:  10.823.140 maxMoves: 7 (13.265 sec)  4.070.863 cubes/sec
+//cubes examined:  3.000.000  in pattern:  13.823.140 in queue:  10.823.140 maxMoves: 7 (13.208 sec)  4.088.431 cubes/sec
+//cubes examined:  3.000.000  in pattern:  13.823.140 in queue:  10.823.140 maxMoves: 7 (13.139 sec)  4.109.901 cubes/sec

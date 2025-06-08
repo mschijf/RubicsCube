@@ -30,30 +30,43 @@ package ms.cube
  *
  */
 
-
-
-const val WHITE = 0x0
-const val ORANGE = 0x1
-const val RED = 0x2
-const val GREEN = 0x3
-const val BLUE = 0x4
-const val YELLOW = 0x5
-
-const val FRONT = 0
-const val BACK = 1
-const val LEFT = 2
-const val RIGHT = 3
-const val UP = 4
-const val DOWN = 5
-
-val startFaceColor = listOf(WHITE, ORANGE, RED, GREEN, BLUE, YELLOW).sorted()
-val initial = startFaceColor.map { clr -> (0..7).sumOf {clr.toUInt() shl 4*it} }
-
 data class Cube (
     val bitFaces: List<UInt>) {
 
     companion object {
-        fun initial() = Cube(initial)
+        const val FRONT = 0
+        const val BACK = 1
+        const val LEFT = 2
+        const val RIGHT = 3
+        const val UP = 4
+        const val DOWN = 5
+
+        const val WHITE = 0x0
+        const val ORANGE = 0x1
+        const val RED = 0x2
+        const val GREEN = 0x3
+        const val BLUE = 0x4
+        const val YELLOW = 0x5
+
+        fun startFrontColor() = WHITE
+        fun startBackColor() = ORANGE
+        fun startLeftColor() = RED
+        fun startRightColor() = GREEN
+        fun startUpColor() = BLUE
+        fun startDownColor() = YELLOW
+
+        fun initial() : Cube {
+            val faceArray = Array<UInt>(6){0U}
+            faceArray[FRONT] = (0..7).sumOf {startFrontColor().toUInt() shl 4*it}
+            faceArray[BACK] = (0..7).sumOf {startBackColor().toUInt() shl 4*it}
+            faceArray[LEFT] = (0..7).sumOf {startLeftColor().toUInt() shl 4*it}
+            faceArray[RIGHT] = (0..7).sumOf {startRightColor().toUInt() shl 4*it}
+            faceArray[UP] = (0..7).sumOf {startUpColor().toUInt() shl 4*it}
+            faceArray[DOWN] = (0..7).sumOf {startDownColor().toUInt() shl 4*it}
+            return Cube(faceArray.toList())
+        }
+
+        private val initialFaces = initial().bitFaces
     }
 
     fun d(n: Int = 1): Cube {
@@ -127,11 +140,11 @@ data class Cube (
     }
 
     fun solved(): Boolean {
-        return bitFaces == initial
+        return bitFaces == initialFaces
     }
 
     fun faceSolved(face: Int): Boolean {
-        return bitFaces[face] == initial[face]
+        return bitFaces[face] == initialFaces[face]
     }
 
     private fun Array<UInt>.shift(face1: Int, idx1: Int, face2: Int, idx2: Int, face3: Int, idx3: Int, face4: Int, idx4: Int) {
@@ -159,4 +172,13 @@ data class Cube (
     fun getColor(face: Int, idx: Int): Int {
         return ((bitFaces[face] and (0xFU shl (4*idx))) shr (4*idx)).toInt()
     }
+
+    fun successorCubes(): List<Cube> {
+        return listOf(
+            l(), r(), d(), u(), f(), b(),
+            l(2), r(2), d(2), u(2), f(2), b(2),
+            l(3), r(3), d(3), u(3), f(3), b(3)
+        )
+    }
+    
 }

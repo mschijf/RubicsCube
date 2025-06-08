@@ -36,24 +36,24 @@ object CubeIndex {
                     cornerCubieIndex[i][j][k] = -1
                     if (i != j && i != k && j != k) {
                         val sortedColors = listOf(i, j, k).sorted()
-                        if (sortedColors[0] == startFaceColor[FRONT]) {
-                            if (sortedColors[1] == startFaceColor[LEFT] && sortedColors[2] == startFaceColor[UP]) {
+                        if (sortedColors[0] == Cube.startFrontColor()) {
+                            if (sortedColors[1] == Cube.startLeftColor() && sortedColors[2] == Cube.startUpColor()) {
                                 cornerCubieIndex[i][j][k] = 0
-                            } else if (sortedColors[1] == startFaceColor[RIGHT] && sortedColors[2] == startFaceColor[UP]) {
+                            } else if (sortedColors[1] == Cube.startRightColor() && sortedColors[2] == Cube.startUpColor()) {
                                 cornerCubieIndex[i][j][k] = 1
-                            } else if (sortedColors[1] == startFaceColor[LEFT] && sortedColors[2] == startFaceColor[DOWN]) {
+                            } else if (sortedColors[1] == Cube.startLeftColor() && sortedColors[2] == Cube.startDownColor()) {
                                 cornerCubieIndex[i][j][k] = 2
-                            } else if (sortedColors[1] == startFaceColor[RIGHT] && sortedColors[2] == startFaceColor[DOWN]) {
+                            } else if (sortedColors[1] == Cube.startRightColor() && sortedColors[2] == Cube.startDownColor()) {
                                 cornerCubieIndex[i][j][k] = 3
                             }
-                        } else if (sortedColors[0] == startFaceColor[BACK]) {
-                            if (sortedColors[1] == startFaceColor[LEFT] && sortedColors[2] == startFaceColor[UP]) {
+                        } else if (sortedColors[0] == Cube.startBackColor()) {
+                            if (sortedColors[1] == Cube.startLeftColor() && sortedColors[2] == Cube.startUpColor()) {
                                 cornerCubieIndex[i][j][k] = 4
-                            } else if (sortedColors[1] == startFaceColor[RIGHT] && sortedColors[2] == startFaceColor[UP]) {
+                            } else if (sortedColors[1] == Cube.startRightColor() && sortedColors[2] == Cube.startUpColor()) {
                                 cornerCubieIndex[i][j][k] = 5
-                            } else if (sortedColors[1] == startFaceColor[LEFT] && sortedColors[2] == startFaceColor[DOWN]) {
+                            } else if (sortedColors[1] == Cube.startLeftColor() && sortedColors[2] == Cube.startDownColor()) {
                                 cornerCubieIndex[i][j][k] = 6
-                            } else if (sortedColors[1] == startFaceColor[RIGHT] && sortedColors[2] == startFaceColor[DOWN]) {
+                            } else if (sortedColors[1] == Cube.startRightColor() && sortedColors[2] == Cube.startDownColor()) {
                                 cornerCubieIndex[i][j][k] = 7
                             }
                         }
