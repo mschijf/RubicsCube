@@ -48,6 +48,8 @@ data class Cube (
         const val BLUE = 0x4
         const val YELLOW = 0x5
 
+        private val initialFaces = initial().bitFaces
+
         fun startFrontColor() = WHITE
         fun startBackColor() = ORANGE
         fun startLeftColor() = RED
@@ -56,7 +58,7 @@ data class Cube (
         fun startDownColor() = YELLOW
 
         fun initial() : Cube {
-            val faceArray = Array<UInt>(6){0U}
+            val faceArray = Array(6){0U}
             faceArray[FRONT] = (0..7).sumOf {startFrontColor().toUInt() shl 4*it}
             faceArray[BACK] = (0..7).sumOf {startBackColor().toUInt() shl 4*it}
             faceArray[LEFT] = (0..7).sumOf {startLeftColor().toUInt() shl 4*it}
@@ -66,7 +68,32 @@ data class Cube (
             return Cube(faceArray.toList())
         }
 
-        private val initialFaces = initial().bitFaces
+        fun cornerCubieIndex(color1: Int, color2: Int, color3: Int): Int {
+            val sortedColors = listOf(color1, color2, color3).sorted()
+            if (sortedColors[0] == startFrontColor()) {
+                if (sortedColors[1] == startLeftColor() && sortedColors[2] == startUpColor()) {
+                    return 0
+                } else if (sortedColors[1] == startRightColor() && sortedColors[2] == startUpColor()) {
+                    return 1
+                } else if (sortedColors[1] == startLeftColor() && sortedColors[2] == startDownColor()) {
+                    return 2
+                } else if (sortedColors[1] == startRightColor() && sortedColors[2] == startDownColor()) {
+                    return 3
+                }
+            } else if (sortedColors[0] == startBackColor()) {
+                if (sortedColors[1] == startLeftColor() && sortedColors[2] == startUpColor()) {
+                    return 4
+                } else if (sortedColors[1] == startRightColor() && sortedColors[2] == startUpColor()) {
+                    return 5
+                } else if (sortedColors[1] == startLeftColor() && sortedColors[2] == startDownColor()) {
+                    return 6
+                } else if (sortedColors[1] == startRightColor() && sortedColors[2] == startDownColor()) {
+                    return 7
+                }
+            }
+            throw Exception("Illegal cubie defined by set of colors: [$color1, $color2, $color3]")
+        }
+
     }
 
     fun d(n: Int = 1): Cube {
@@ -180,5 +207,4 @@ data class Cube (
             l(3), r(3), d(3), u(3), f(3), b(3)
         )
     }
-    
 }

@@ -3,47 +3,90 @@ package ms.cube
 import java.util.Locale
 import kotlin.collections.ArrayDeque
 
-
-class CubeCornerSolver {
+class CornerEdgePattern {
 
     private val edgePattern = IntArray(88_179_840) {-1}
 
+    private val orientationIndex = initOrientationIndex()
+    private val cornerCubieIndex = initCornerCubieIndex()
+
+    fun Cube.getCornerMoves(): Int {
+        return edgePattern[this.getCornerIndex()]
+    }
+
+    private fun initOrientationIndex(): Array<Array<IntArray>> {
+        val orientationIndex = Array(6){ Array(6) {IntArray(6) {-1} } }
+        for (i in 0..5) {
+            for (j in 0..5) {
+                for (k in 0..5) {
+                    if (i < j && i < k && j != k) {
+                        orientationIndex[i][j][k] = 0
+                    } else if (j < i && j < k && i != k) {
+                        orientationIndex[i][j][k] = 1
+                    } else if (k < i && k < j && i != j) {
+                        orientationIndex[i][j][k] = 2
+                    } else {
+                        orientationIndex[i][j][k] = -1
+                    }
+                }
+            }
+        }
+        return orientationIndex
+    }
+
+    private fun initCornerCubieIndex(): Array<Array<IntArray>> {
+        val cornerCubieIndex = Array(6){ Array(6) {IntArray(6) {-1} } }
+        for (i in 0..5) {
+            for (j in 0..5) {
+                for (k in 0..5) {
+                    try {
+                        cornerCubieIndex[i][j][k] = Cube.cornerCubieIndex(i, j, k)
+                    } catch (_: Exception) {
+                        cornerCubieIndex[i][j][k] = -1
+                    }
+                }
+            }
+        }
+        return cornerCubieIndex
+    }
+
     private fun Cube.getCornerCubieIndex(): Int {
         val cornerCubieList = listOf(
-            CubeIndex.cornerCubieIndex[getColor(Cube.FRONT, 0)][getColor(Cube.LEFT, 0)][getColor(Cube.UP, 6)],
-            CubeIndex.cornerCubieIndex[getColor(Cube.FRONT, 2)][getColor(Cube.RIGHT, 0)][getColor(Cube.UP, 4)],
-            CubeIndex.cornerCubieIndex[getColor(Cube.FRONT, 6)][getColor(Cube.LEFT, 6)][getColor(Cube.DOWN, 6)],
-            CubeIndex.cornerCubieIndex[getColor(Cube.FRONT, 4)][getColor(Cube.RIGHT, 6)][getColor(Cube.DOWN, 4)],
+            cornerCubieIndex[getColor(Cube.FRONT, 0)][getColor(Cube.LEFT, 0)][getColor(Cube.UP, 6)],
+            cornerCubieIndex[getColor(Cube.FRONT, 2)][getColor(Cube.RIGHT, 0)][getColor(Cube.UP, 4)],
+            cornerCubieIndex[getColor(Cube.FRONT, 6)][getColor(Cube.LEFT, 6)][getColor(Cube.DOWN, 6)],
+            cornerCubieIndex[getColor(Cube.FRONT, 4)][getColor(Cube.RIGHT, 6)][getColor(Cube.DOWN, 4)],
 
-            CubeIndex.cornerCubieIndex[getColor(Cube.BACK, 0)][getColor(Cube.LEFT, 2)][getColor(Cube.UP, 0)],
-            CubeIndex.cornerCubieIndex[getColor(Cube.BACK, 2)][getColor(Cube.RIGHT, 2)][getColor(Cube.UP, 2)],
-            CubeIndex.cornerCubieIndex[getColor(Cube.BACK, 6)][getColor(Cube.LEFT, 4)][getColor(Cube.DOWN, 0)],
-            CubeIndex.cornerCubieIndex[getColor(Cube.BACK, 4)][getColor(Cube.RIGHT, 4)][getColor(Cube.DOWN, 2)]
+            cornerCubieIndex[getColor(Cube.BACK, 0)][getColor(Cube.LEFT, 2)][getColor(Cube.UP, 0)],
+            cornerCubieIndex[getColor(Cube.BACK, 2)][getColor(Cube.RIGHT, 2)][getColor(Cube.UP, 2)],
+            cornerCubieIndex[getColor(Cube.BACK, 6)][getColor(Cube.LEFT, 4)][getColor(Cube.DOWN, 0)],
+            cornerCubieIndex[getColor(Cube.BACK, 4)][getColor(Cube.RIGHT, 4)][getColor(Cube.DOWN, 2)]
         )
         return permutationIndex(cornerCubieList)
     }
 
-    private fun Cube.getCornerCubieOrienationIndex(): Int {
+    private fun Cube.getCornerCubieOrientationIndex(): Int {
         val orientationList = listOf(
-            CubeIndex.orientationIndex[getColor(Cube.FRONT, 0)][getColor(Cube.LEFT, 0)][getColor(Cube.UP, 6)],
-            CubeIndex.orientationIndex[getColor(Cube.FRONT, 2)][getColor(Cube.RIGHT, 0)][getColor(Cube.UP, 4)],
-            CubeIndex.orientationIndex[getColor(Cube.FRONT, 6)][getColor(Cube.LEFT, 6)][getColor(Cube.DOWN, 6)],
-            CubeIndex.orientationIndex[getColor(Cube.FRONT, 4)][getColor(Cube.RIGHT, 6)][getColor(Cube.DOWN, 4)],
+            orientationIndex[getColor(Cube.FRONT, 0)][getColor(Cube.LEFT, 0)][getColor(Cube.UP, 6)],
+            orientationIndex[getColor(Cube.FRONT, 2)][getColor(Cube.RIGHT, 0)][getColor(Cube.UP, 4)],
+            orientationIndex[getColor(Cube.FRONT, 6)][getColor(Cube.LEFT, 6)][getColor(Cube.DOWN, 6)],
+            orientationIndex[getColor(Cube.FRONT, 4)][getColor(Cube.RIGHT, 6)][getColor(Cube.DOWN, 4)],
 
-            CubeIndex.orientationIndex[getColor(Cube.BACK, 0)][getColor(Cube.LEFT, 2)][getColor(Cube.UP, 0)],
-            CubeIndex.orientationIndex[getColor(Cube.BACK, 2)][getColor(Cube.RIGHT, 2)][getColor(Cube.UP, 2)],
-            CubeIndex.orientationIndex[getColor(Cube.BACK, 6)][getColor(Cube.LEFT, 4)][getColor(Cube.DOWN, 0)],
+            orientationIndex[getColor(Cube.BACK, 0)][getColor(Cube.LEFT, 2)][getColor(Cube.UP, 0)],
+            orientationIndex[getColor(Cube.BACK, 2)][getColor(Cube.RIGHT, 2)][getColor(Cube.UP, 2)],
+            orientationIndex[getColor(Cube.BACK, 6)][getColor(Cube.LEFT, 4)][getColor(Cube.DOWN, 0)],
 //            CubeIndex.orientationIndex[getColor(Cube.BACK, 4)][getColor(Cube.RIGHT, 4)][getColor(Cube.DOWN, 2)]
         )
         return powerIndex(orientationList)
     }
 
     private fun Cube.getCornerIndex(): Int {
-        val pow3_7 = 2187
-        return pow3_7 * this.getCornerCubieIndex() + this.getCornerCubieOrienationIndex()
+
+        return 2187 * this.getCornerCubieIndex() +       //3^7 = 2187
+                this.getCornerCubieOrientationIndex()
     }
 
-    fun permutationIndex(permutation: List<Int>): Int {
+    private fun permutationIndex(permutation: List<Int>): Int {
         var index = 0
         var position = 2 // position 1 is paired with factor 0 and so is skipped
         var factor = 1
@@ -61,8 +104,7 @@ class CubeCornerSolver {
         return index
     }
 
-    fun powerIndex(list: List<Int>): Int {
-//        return list.reduce { acc, i -> acc * 3 + i } --> slower
+    private fun powerIndex(list: List<Int>): Int {
         var result = 0
         list.forEach { i ->
             result = result*3 + i
@@ -70,9 +112,7 @@ class CubeCornerSolver {
         return result
     }
 
-
-
-    fun solve() {
+    fun preCalculate() {
         val startTime = System.currentTimeMillis()
         var max = 0
         var count = 0
@@ -97,7 +137,7 @@ class CubeCornerSolver {
             }
 
             val current = queue.removeFirst()
-            val movesDone = edgePattern[current.getCornerIndex()]
+            val movesDone = current.getCornerMoves()//edgePattern[current.getCornerIndex()]
             max = maxOf(max, movesDone)
             count++
             current

@@ -1,6 +1,6 @@
-import ms.cube.CubeCornerSolver
+import ms.cube.CornerEdgePattern
 
 fun main() {
-    CubeCornerSolver().solve()
+    CornerEdgePattern().preCalculate()
 }
 
