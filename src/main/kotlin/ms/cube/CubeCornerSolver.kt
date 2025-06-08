@@ -6,41 +6,73 @@ import kotlin.collections.ArrayDeque
 
 class CubeCornerSolver {
 
-    private fun Cube.getCornerIndex(): Int {
-        val cornerCubieList = listOf(
-            cornerCubieIndex[this.getColor(FRONT, 0)][this.getColor(LEFT, 0)][this.getColor(UP, 6)],
-            cornerCubieIndex[this.getColor(FRONT, 2)][this.getColor(RIGHT, 0)][this.getColor(UP, 4)],
-            cornerCubieIndex[this.getColor(FRONT, 6)][this.getColor(LEFT, 6)][this.getColor(DOWN, 6)],
-            cornerCubieIndex[this.getColor(FRONT, 4)][this.getColor(RIGHT, 6)][this.getColor(DOWN, 4)],
-
-            cornerCubieIndex[this.getColor(BACK, 0)][this.getColor(LEFT, 2)][this.getColor(UP, 0)],
-            cornerCubieIndex[this.getColor(BACK, 2)][this.getColor(RIGHT, 2)][this.getColor(UP, 2)],
-            cornerCubieIndex[this.getColor(BACK, 6)][this.getColor(LEFT, 4)][this.getColor(DOWN, 0)],
-            cornerCubieIndex[this.getColor(BACK, 4)][this.getColor(RIGHT, 4)][this.getColor(DOWN, 2)]
-        )
-
-        val orientationList = listOf(
-            orientationIndex[this.getColor(FRONT, 0)][this.getColor(LEFT, 0)][this.getColor(UP, 6)],
-            orientationIndex[this.getColor(FRONT, 2)][this.getColor(RIGHT, 0)][this.getColor(UP, 4)],
-            orientationIndex[this.getColor(FRONT, 6)][this.getColor(LEFT, 6)][this.getColor(DOWN, 6)],
-            orientationIndex[this.getColor(FRONT, 4)][this.getColor(RIGHT, 6)][this.getColor(DOWN, 4)],
-
-            orientationIndex[this.getColor(BACK, 0)][this.getColor(LEFT, 2)][this.getColor(UP, 0)],
-            orientationIndex[this.getColor(BACK, 2)][this.getColor(RIGHT, 2)][this.getColor(UP, 2)],
-            orientationIndex[this.getColor(BACK, 6)][this.getColor(LEFT, 4)][this.getColor(DOWN, 0)],
-//            orientationIndex[this.getColor(BACK, 4)][this.getColor(RIGHT, 4)][this.getColor(DOWN, 2)]
-        )
-
-        val cubiePermutationIndex = permutationIndex(cornerCubieList)
-        val cubieOrientationIndex = powerIndex(orientationList)
-
-        val pow3_7 = 2187
-        return pow3_7 * cubiePermutationIndex + cubieOrientationIndex
-    }
-
     private val edgePattern = IntArray(88_179_840) {-1}
 
+    private fun Cube.getCornerCubieIndex(): Int {
+        val cornerCubieList = listOf(
+            CubeIndex.cornerCubieIndex[this.getColor(FRONT, 0)][this.getColor(LEFT, 0)][this.getColor(UP, 6)],
+            CubeIndex.cornerCubieIndex[this.getColor(FRONT, 2)][this.getColor(RIGHT, 0)][this.getColor(UP, 4)],
+            CubeIndex.cornerCubieIndex[this.getColor(FRONT, 6)][this.getColor(LEFT, 6)][this.getColor(DOWN, 6)],
+            CubeIndex.cornerCubieIndex[this.getColor(FRONT, 4)][this.getColor(RIGHT, 6)][this.getColor(DOWN, 4)],
+
+            CubeIndex.cornerCubieIndex[this.getColor(BACK, 0)][this.getColor(LEFT, 2)][this.getColor(UP, 0)],
+            CubeIndex.cornerCubieIndex[this.getColor(BACK, 2)][this.getColor(RIGHT, 2)][this.getColor(UP, 2)],
+            CubeIndex.cornerCubieIndex[this.getColor(BACK, 6)][this.getColor(LEFT, 4)][this.getColor(DOWN, 0)],
+            CubeIndex.cornerCubieIndex[this.getColor(BACK, 4)][this.getColor(RIGHT, 4)][this.getColor(DOWN, 2)]
+        )
+        return permutationIndex(cornerCubieList)
+    }
+
+    private fun Cube.getCornerCubieOrienationIndex(): Int {
+        val orientationList = listOf(
+            CubeIndex.orientationIndex[this.getColor(FRONT, 0)][this.getColor(LEFT, 0)][this.getColor(UP, 6)],
+            CubeIndex.orientationIndex[this.getColor(FRONT, 2)][this.getColor(RIGHT, 0)][this.getColor(UP, 4)],
+            CubeIndex.orientationIndex[this.getColor(FRONT, 6)][this.getColor(LEFT, 6)][this.getColor(DOWN, 6)],
+            CubeIndex.orientationIndex[this.getColor(FRONT, 4)][this.getColor(RIGHT, 6)][this.getColor(DOWN, 4)],
+
+            CubeIndex.orientationIndex[this.getColor(BACK, 0)][this.getColor(LEFT, 2)][this.getColor(UP, 0)],
+            CubeIndex.orientationIndex[this.getColor(BACK, 2)][this.getColor(RIGHT, 2)][this.getColor(UP, 2)],
+            CubeIndex.orientationIndex[this.getColor(BACK, 6)][this.getColor(LEFT, 4)][this.getColor(DOWN, 0)],
+//            CubeIndex.orientationIndex[this.getColor(BACK, 4)][this.getColor(RIGHT, 4)][this.getColor(DOWN, 2)]
+        )
+        return powerIndex(orientationList)
+    }
+
+    private fun Cube.getCornerIndex(): Int {
+        val pow3_7 = 2187
+        return pow3_7 * this.getCornerCubieIndex() + this.getCornerCubieOrienationIndex()
+    }
+
+    fun permutationIndex(permutation: List<Int>): Int {
+        var index = 0
+        var position = 2 // position 1 is paired with factor 0 and so is skipped
+        var factor = 1
+        for (p in permutation.size - 2 downTo 0) {
+            var successors = 0
+            for (q in p + 1..<permutation.size) {
+                if (permutation[p] > permutation[q]) {
+                    successors++
+                }
+            }
+            index += (successors * factor)
+            factor *= position
+            position++
+        }
+        return index
+    }
+
+    fun powerIndex(list: List<Int>): Int {
+        var result = 0
+        list.forEach { i ->
+            result = result*3 + i
+        }
+        return result
+    }
+
+
+
     fun solve() {
+        val startTime = System.currentTimeMillis()
         var max = 0
         var count = 0
         val cube = Cube.initial().onlyCornerFields()
@@ -50,14 +82,17 @@ class CubeCornerSolver {
         var inPattern = 1
         while (queue.isNotEmpty()) {
             if (count % 100_000 == 0) {
+                val timePassed = System.currentTimeMillis() - startTime
                 println()
-                print("queue: ${String.format(Locale.GERMANY, " %,d",queue.size)}" +
-                        " maxMoves: $max." +
+                print("" +
+                        "cubes examined: ${String.format(Locale.GERMANY, " %,d",count)} " +
+                        " in pattern: ${String.format(Locale.GERMANY, " %,d",inPattern)}" +
+                        " in queue: ${String.format(Locale.GERMANY, " %,d",queue.size)}" +
+                        " maxMoves: $max" +
+                        " (%d.%03d sec)".format(timePassed / 1000, timePassed % 1000) +
+                        " ${String.format(Locale.GERMANY, " %,d",(1000.0*count*18.0 / timePassed).toInt())} cubes/sec" +
                         ""
                 )
-
-            } else if (count % 1000 == 0) {
-                print(".")
             }
 
             val current = queue.removeFirst()
@@ -75,7 +110,10 @@ class CubeCornerSolver {
                     }
                 }
         }
+        val timePassed = System.currentTimeMillis() - startTime
         println()
+        println()
+        print("All done in %d.%03d sec".format(timePassed / 1000, timePassed % 1000))
         println("max moves: $max")
         println("Stored in pattern: $inPattern")
         println("start printing errors")
@@ -101,3 +139,4 @@ class CubeCornerSolver {
 
 //Done in 468.782 sec
 //Done in 482.762 sec
+//Done in 455.283 sec
