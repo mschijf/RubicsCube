@@ -67,10 +67,10 @@ data class Cube (
             return Cube(faceArray.toList())
         }
 
-        fun randomCube(seed: Int) : Cube {
+        fun randomCube(seed: Int, randomMoveCount: Int=100) : Cube {
             var cube = initial()
             val random = Random(seed)
-            repeat(100) {
+            repeat(randomMoveCount) {
                 val succ = cube.successorCubes()
                 cube = succ[random.nextInt(succ.size)]
             }
@@ -100,7 +100,7 @@ data class Cube (
                     return 7
                 }
             }
-            throw Exception("Illegal cubie defined by set of colors: [$color1, $color2, $color3]")
+            return -1
         }
         
         fun cornerCubieOrientationIndex(color1: Int, color2: Int, color3: Int): Int {
@@ -111,8 +111,55 @@ data class Cube (
             } else if (color3 < color1 && color3 < color2 && color1 != color2) {
                 2
             } else {
-                throw Exception("Illegal cubie-orientation defined by set of colors: [$color1, $color2, $color3]")
+                -1
             }
+        }
+
+        fun edgeCubieOrientationIndex(color1: Int, color2: Int): Int {
+            return if (color1 < color2)
+                0
+            else if (color2 < color1)
+                1
+            else
+                -1
+        }
+
+        fun edgeCubieIndex(color1: Int, color2: Int): Int {
+            val sortedColors = listOf(color1, color2).sortedBy { colorToInitialFace[it]!! }
+            if (sortedColors[0] == COLOR_START_FRONT) {
+                if (sortedColors[1] == COLOR_START_LEFT) {
+                    return 0
+                } else if (sortedColors[1] == COLOR_START_RIGHT) {
+                    return 1
+                } else if (sortedColors[1] == COLOR_START_UP) {
+                    return 2
+                } else if (sortedColors[1] == COLOR_START_DOWN) {
+                    return 3
+                }
+            } else if (sortedColors[0] == COLOR_START_BACK) {
+                if (sortedColors[1] == COLOR_START_LEFT) {
+                    return 4
+                } else if (sortedColors[1] == COLOR_START_RIGHT) {
+                    return 5
+                } else if (sortedColors[1] == COLOR_START_UP) {
+                    return 6
+                } else if (sortedColors[1] == COLOR_START_DOWN) {
+                    return 7
+                }
+            } else if (sortedColors[0] == COLOR_START_LEFT) {
+                if (sortedColors[1] == COLOR_START_UP) {
+                    return 8
+                } else if (sortedColors[1] == COLOR_START_DOWN) {
+                    return 9
+                }
+            } else if (sortedColors[0] == COLOR_START_RIGHT) {
+                if (sortedColors[1] == COLOR_START_UP) {
+                    return 10
+                } else if (sortedColors[1] == COLOR_START_DOWN) {
+                    return 11
+                }
+            }
+            return -1
         }
     }
 
@@ -186,6 +233,21 @@ data class Cube (
         return Cube(bitFaces.map { it and 0x0F0F0F0FU })
     }
 
+    fun onlyFields(fieldList: List<Pair<Int, Int>>): Cube {
+        val bitArray: Array<UInt> = Array(6) { face -> bitFaces[face] }
+        for (face in bitFaces.indices) {
+            for (fieldIndex in 0..8) {
+                val field = Pair(face, fieldIndex)
+                if (field in fieldList) {
+                    bitArray[face] = bitFaces[face] and (0xFU shl 4*fieldIndex)
+                } else {
+                    bitArray[face] = bitFaces[face] and (0xFU shl 4*fieldIndex).inv()
+                }
+            }
+        }
+        return Cube(bitArray.toList())
+    }
+
     fun solved(): Boolean {
         return bitFaces == initialFaces
     }
@@ -226,5 +288,48 @@ data class Cube (
             l(2), r(2), d(2), u(2), f(2), b(2),
             l(3), r(3), d(3), u(3), f(3), b(3)
         )
+    }
+
+    fun successorCubeMoves(lastMove: String, prevMove: String): List<Pair<String, Cube>> {
+        val result = listOf(
+            Pair("l1", l()),
+            Pair("r1",r()),
+            Pair("d1",d()),
+            Pair("u1",u()),
+            Pair("f1",f()),
+            Pair("b1",b()),
+            Pair("l2",l(2)),
+            Pair("r2",r(2)),
+            Pair("d2",d(2)),
+            Pair("u2",u(2)),
+            Pair("f2",f(2)),
+            Pair("b2",b(2)),
+            Pair("l3",l(3)),
+            Pair("r3",r(3)),
+            Pair("d3",d(3)),
+            Pair("u3",u(3)),
+            Pair("f3",f(3)),
+            Pair("b3",b(3))
+        ).filterNot { it.first.startsWith(lastMove[0]) }
+
+        return if (lastMove[0] == prevMove.opposite()) {
+            result.filterNot { it.first.startsWith(prevMove[0]) }
+        } else {
+            result
+        }
+
+    }
+
+    private val oppositeMap = mapOf (
+        'l' to 'r',
+        'r' to 'l',
+        'u' to 'd',
+        'd' to 'u',
+        'f' to 'b',
+        'b' to 'f',
+        '-' to '-'
+    )
+    fun String.opposite(): Char {
+        return oppositeMap[this[0]]!!
     }
 }

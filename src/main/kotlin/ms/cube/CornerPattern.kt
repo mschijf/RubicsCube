@@ -1,5 +1,8 @@
 package ms.cube
 
+import java.io.File
+import java.io.InputStream
+import java.io.PrintWriter
 import java.util.Locale
 import kotlin.collections.ArrayDeque
 
@@ -10,8 +13,8 @@ class CornerPattern {
     private val orientationIndex = initOrientationIndex()
     private val cornerCubieIndex = initCornerCubieIndex()
 
-    fun Cube.getSolveCornerMovesCount(): Int {
-        return cornerPattern[this.getCornerIndex()]
+    fun getSolveCornerMovesCount(cube: Cube): Int {
+        return cornerPattern[cube.getCornerIndex()]
     }
 
     private fun initOrientationIndex(): Array<Array<IntArray>> {
@@ -19,11 +22,7 @@ class CornerPattern {
         for (i in 0..5) {
             for (j in 0..5) {
                 for (k in 0..5) {
-                    try {
-                        orientationIndex[i][j][k] = Cube.cornerCubieOrientationIndex(i, j, k)
-                    } catch (_: Exception) {
-                        orientationIndex[i][j][k] = -1
-                    }
+                    orientationIndex[i][j][k] = Cube.cornerCubieOrientationIndex(i, j, k)
                 }
             }
         }
@@ -35,11 +34,7 @@ class CornerPattern {
         for (i in 0..5) {
             for (j in 0..5) {
                 for (k in 0..5) {
-                    try {
-                        cornerCubieIndex[i][j][k] = Cube.cornerCubieIndex(i, j, k)
-                    } catch (_: Exception) {
-                        cornerCubieIndex[i][j][k] = -1
-                    }
+                    cornerCubieIndex[i][j][k] = Cube.cornerCubieIndex(i, j, k)
                 }
             }
         }
@@ -73,7 +68,7 @@ class CornerPattern {
             orientationIndex[getColor(Cube.BACK, 6)][getColor(Cube.LEFT, 4)][getColor(Cube.DOWN, 0)],
 //            CubeIndex.orientationIndex[getColor(Cube.BACK, 4)][getColor(Cube.RIGHT, 4)][getColor(Cube.DOWN, 2)]
         )
-        return powerIndex(orientationList)
+        return powerThreeIndex(orientationList)
     }
 
     private fun Cube.getCornerIndex(): Int {
@@ -100,7 +95,7 @@ class CornerPattern {
         return index
     }
 
-    private fun powerIndex(list: List<Int>): Int {
+    private fun powerThreeIndex(list: List<Int>): Int {
         var result = 0
         list.forEach { i ->
             result = result*3 + i
@@ -133,7 +128,7 @@ class CornerPattern {
             }
 
             val current = queue.removeFirst()
-            val movesDone = current.getSolveCornerMovesCount()//cornerPattern[current.getCornerIndex()]
+            val movesDone = getSolveCornerMovesCount(current)//cornerPattern[current.getCornerIndex()]
             max = maxOf(max, movesDone)
             count++
             current
@@ -163,7 +158,32 @@ class CornerPattern {
         }
         println("all printed")
         println("max moves (recalculated): $max")
+        save()
     }
+
+    private fun save() {
+        println("start saving")
+        val writer = PrintWriter("data/cornerPattern.txt")
+        cornerPattern.forEach { line ->
+            writer.append("$line\n")
+        }
+        writer.close()
+        println("Saving done")
+    }
+
+    fun read() {
+        println("start reading corner pattern")
+        val inputStream: InputStream = File("data/cornerPattern.txt").inputStream()
+        var index = 0
+        inputStream.bufferedReader().forEachLine { line ->
+            cornerPattern[index] = line.toInt()
+            index++
+        }
+        inputStream.close()
+        println("Reading corenr pattern done ($index lines read)")
+    }
+
+
 }
 
 //Done in 468.782 sec
