@@ -3,15 +3,15 @@ package ms.cube
 import java.util.Locale
 import kotlin.collections.ArrayDeque
 
-class CornerEdgePattern {
+class CornerPattern {
 
-    private val edgePattern = IntArray(88_179_840) {-1}
+    private val cornerPattern = IntArray(88_179_840) {-1}
 
     private val orientationIndex = initOrientationIndex()
     private val cornerCubieIndex = initCornerCubieIndex()
 
-    fun Cube.getCornerMoves(): Int {
-        return edgePattern[this.getCornerIndex()]
+    fun Cube.getSolveCornerMovesCount(): Int {
+        return cornerPattern[this.getCornerIndex()]
     }
 
     private fun initOrientationIndex(): Array<Array<IntArray>> {
@@ -19,13 +19,9 @@ class CornerEdgePattern {
         for (i in 0..5) {
             for (j in 0..5) {
                 for (k in 0..5) {
-                    if (i < j && i < k && j != k) {
-                        orientationIndex[i][j][k] = 0
-                    } else if (j < i && j < k && i != k) {
-                        orientationIndex[i][j][k] = 1
-                    } else if (k < i && k < j && i != j) {
-                        orientationIndex[i][j][k] = 2
-                    } else {
+                    try {
+                        orientationIndex[i][j][k] = Cube.cornerCubieOrientationIndex(i, j, k)
+                    } catch (_: Exception) {
                         orientationIndex[i][j][k] = -1
                     }
                 }
@@ -119,7 +115,7 @@ class CornerEdgePattern {
         val cube = Cube.initial().onlyCornerFields()
         val queue = ArrayDeque<Cube>()
         queue.add(cube)
-        edgePattern[cube.getCornerIndex()] = 0
+        cornerPattern[cube.getCornerIndex()] = 0
         var inPattern = 1
         while (queue.isNotEmpty()) {
             if (count % 100_000 == 0) {
@@ -137,15 +133,15 @@ class CornerEdgePattern {
             }
 
             val current = queue.removeFirst()
-            val movesDone = current.getCornerMoves()//edgePattern[current.getCornerIndex()]
+            val movesDone = current.getSolveCornerMovesCount()//cornerPattern[current.getCornerIndex()]
             max = maxOf(max, movesDone)
             count++
             current
                 .successorCubes()
                 .forEach { cb ->
                     val index = cb.getCornerIndex()
-                    if (edgePattern[index] < 0) {
-                        edgePattern[index] = movesDone + 1
+                    if (cornerPattern[index] < 0) {
+                        cornerPattern[index] = movesDone + 1
                         inPattern++
                         queue.add(cb)
                     }
@@ -159,11 +155,11 @@ class CornerEdgePattern {
         println("Stored in pattern: $inPattern")
         println("start printing errors")
         max = 0
-        for (i in edgePattern.indices) {
-            if (edgePattern[i] < 0)
+        for (i in cornerPattern.indices) {
+            if (cornerPattern[i] < 0)
                 println(i)
-            if (edgePattern[i] > max)
-                max = maxOf(edgePattern[i], max)
+            if (cornerPattern[i] > max)
+                max = maxOf(cornerPattern[i], max)
         }
         println("all printed")
         println("max moves (recalculated): $max")
@@ -174,6 +170,7 @@ class CornerEdgePattern {
 //Done in 482.762 sec
 //Done in 455.283 sec
 //All done in 449.640 sec
+//All done in 452.387 sec
 
 //cubes examined:  3.000.000  in pattern:  13.823.140 in queue:  10.823.140 maxMoves: 7 (13.803 sec)  3.912.193 cubes/sec
 //cubes examined:  3.000.000  in pattern:  13.823.140 in queue:  10.823.140 maxMoves: 7 (13.464 sec)  4.010.695 cubes/sec

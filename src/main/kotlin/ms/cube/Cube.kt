@@ -1,5 +1,7 @@
 package ms.cube
 
+import kotlin.random.Random
+
 /*                        UP.                               UP'
  *                   +---+---+---+                     +---+---+---+
  *                   | 0 | 1 | 2 |                     | 2 | 1 | 0 |
@@ -41,59 +43,77 @@ data class Cube (
         const val UP = 4
         const val DOWN = 5
 
-        const val WHITE = 0x0
-        const val ORANGE = 0x1
-        const val RED = 0x2
-        const val GREEN = 0x3
-        const val BLUE = 0x4
-        const val YELLOW = 0x5
+        //color-values must be defined in order of: front/down, left/right, up/down
+        //             and must lie in 0..5
+
+        private const val COLOR_START_FRONT = 0x0
+        private const val COLOR_START_BACK = 0x3
+        private const val COLOR_START_LEFT = 0x2
+        private const val COLOR_START_RIGHT = 0x1
+        private const val COLOR_START_UP = 0x4
+        private const val COLOR_START_DOWN = 0x5
 
         private val initialFaces = initial().bitFaces
-
-        fun startFrontColor() = WHITE
-        fun startBackColor() = ORANGE
-        fun startLeftColor() = RED
-        fun startRightColor() = GREEN
-        fun startUpColor() = BLUE
-        fun startDownColor() = YELLOW
+        private val colorToInitialFace = initial().bitFaces.mapIndexed{ faceIdx, color -> (color and 0xFU).toInt() to faceIdx }.toMap()
 
         fun initial() : Cube {
             val faceArray = Array(6){0U}
-            faceArray[FRONT] = (0..7).sumOf {startFrontColor().toUInt() shl 4*it}
-            faceArray[BACK] = (0..7).sumOf {startBackColor().toUInt() shl 4*it}
-            faceArray[LEFT] = (0..7).sumOf {startLeftColor().toUInt() shl 4*it}
-            faceArray[RIGHT] = (0..7).sumOf {startRightColor().toUInt() shl 4*it}
-            faceArray[UP] = (0..7).sumOf {startUpColor().toUInt() shl 4*it}
-            faceArray[DOWN] = (0..7).sumOf {startDownColor().toUInt() shl 4*it}
+            faceArray[FRONT] = (0..7).sumOf {COLOR_START_FRONT.toUInt() shl 4*it}
+            faceArray[BACK] = (0..7).sumOf {COLOR_START_BACK.toUInt() shl 4*it}
+            faceArray[LEFT] = (0..7).sumOf {COLOR_START_LEFT.toUInt() shl 4*it}
+            faceArray[RIGHT] = (0..7).sumOf {COLOR_START_RIGHT.toUInt() shl 4*it}
+            faceArray[UP] = (0..7).sumOf {COLOR_START_UP.toUInt() shl 4*it}
+            faceArray[DOWN] = (0..7).sumOf {COLOR_START_DOWN.toUInt() shl 4*it}
             return Cube(faceArray.toList())
         }
 
+        fun randomCube(seed: Int) : Cube {
+            var cube = initial()
+            val random = Random(seed)
+            repeat(100) {
+                val succ = cube.successorCubes()
+                cube = succ[random.nextInt(succ.size)]
+            }
+            return cube
+        }
+
         fun cornerCubieIndex(color1: Int, color2: Int, color3: Int): Int {
-            val sortedColors = listOf(color1, color2, color3).sorted()
-            if (sortedColors[0] == startFrontColor()) {
-                if (sortedColors[1] == startLeftColor() && sortedColors[2] == startUpColor()) {
+            val sortedColors = listOf(color1, color2, color3).sortedBy { colorToInitialFace[it]!! }
+            if (sortedColors[0] == COLOR_START_FRONT) {
+                if (sortedColors[1] == COLOR_START_LEFT && sortedColors[2] == COLOR_START_UP) {
                     return 0
-                } else if (sortedColors[1] == startRightColor() && sortedColors[2] == startUpColor()) {
+                } else if (sortedColors[1] == COLOR_START_RIGHT && sortedColors[2] == COLOR_START_UP) {
                     return 1
-                } else if (sortedColors[1] == startLeftColor() && sortedColors[2] == startDownColor()) {
+                } else if (sortedColors[1] == COLOR_START_LEFT && sortedColors[2] == COLOR_START_DOWN) {
                     return 2
-                } else if (sortedColors[1] == startRightColor() && sortedColors[2] == startDownColor()) {
+                } else if (sortedColors[1] == COLOR_START_RIGHT && sortedColors[2] == COLOR_START_DOWN) {
                     return 3
                 }
-            } else if (sortedColors[0] == startBackColor()) {
-                if (sortedColors[1] == startLeftColor() && sortedColors[2] == startUpColor()) {
+            } else if (sortedColors[0] == COLOR_START_BACK) {
+                if (sortedColors[1] == COLOR_START_LEFT && sortedColors[2] == COLOR_START_UP) {
                     return 4
-                } else if (sortedColors[1] == startRightColor() && sortedColors[2] == startUpColor()) {
+                } else if (sortedColors[1] == COLOR_START_RIGHT && sortedColors[2] == COLOR_START_UP) {
                     return 5
-                } else if (sortedColors[1] == startLeftColor() && sortedColors[2] == startDownColor()) {
+                } else if (sortedColors[1] == COLOR_START_LEFT && sortedColors[2] == COLOR_START_DOWN) {
                     return 6
-                } else if (sortedColors[1] == startRightColor() && sortedColors[2] == startDownColor()) {
+                } else if (sortedColors[1] == COLOR_START_RIGHT && sortedColors[2] == COLOR_START_DOWN) {
                     return 7
                 }
             }
             throw Exception("Illegal cubie defined by set of colors: [$color1, $color2, $color3]")
         }
-
+        
+        fun cornerCubieOrientationIndex(color1: Int, color2: Int, color3: Int): Int {
+            return if (color1 < color2 && color1 < color3 && color2 != color3) {
+                0
+            } else if (color2 < color1 && color2 < color3 && color1 != color3) {
+                1
+            } else if (color3 < color1 && color3 < color2 && color1 != color2) {
+                2
+            } else {
+                throw Exception("Illegal cubie-orientation defined by set of colors: [$color1, $color2, $color3]")
+            }
+        }
     }
 
     fun d(n: Int = 1): Cube {
