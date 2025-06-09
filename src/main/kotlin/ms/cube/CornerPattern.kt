@@ -1,5 +1,7 @@
 package ms.cube
 
+import ms.tools.permutationIndex
+import ms.tools.powerThreeIndex
 import java.io.File
 import java.io.InputStream
 import java.io.PrintWriter
@@ -75,32 +77,6 @@ class CornerPattern {
 
         return 2187 * this.getCornerCubieIndex() +       //3^7 = 2187
                 this.getCornerCubieOrientationIndex()
-    }
-
-    private fun permutationIndex(permutation: List<Int>): Int {
-        var index = 0
-        var position = 2 // position 1 is paired with factor 0 and so is skipped
-        var factor = 1
-        for (p in permutation.size - 2 downTo 0) {
-            var successors = 0
-            for (q in p + 1..<permutation.size) {
-                if (permutation[p] > permutation[q]) {
-                    successors++
-                }
-            }
-            index += (successors * factor)
-            factor *= position
-            position++
-        }
-        return index
-    }
-
-    private fun powerThreeIndex(list: List<Int>): Int {
-        var result = 0
-        list.forEach { i ->
-            result = result*3 + i
-        }
-        return result
     }
 
     fun preCalculate() {

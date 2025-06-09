@@ -1,5 +1,7 @@
 package ms.cube
 
+import ms.tools.permutationIndex
+import ms.tools.powerTwoIndex
 import java.io.File
 import java.io.InputStream
 import java.io.PrintWriter
@@ -76,47 +78,6 @@ class EdgePattern {
     private fun Cube.getEdgeIndex(): Int {
         return 64 * this.getEdgeCubieIndex() +       //2^6 = 64
                 this.getEdgeCubieOrientationIndex()
-    }
-
-    private val permTable = calcPermtable()
-    private fun calcPermtable(): Array<IntArray> {
-        val permTable = Array(12){ IntArray(12) {1} }
-        for (i in 0..11)
-            for (j in 0..11) {
-                permTable[i][j] = perm(i, j)
-            }
-        return permTable
-    }
-
-    //calculate n! / (n-k)!
-    private fun perm(n: Int, k: Int): Int {
-        var result = 1
-        for (i in n downTo (n - k + 1))
-            result *= i
-        return result
-    }
-
-    private fun permutationIndex(seq: List<Int>, poolSize: Int): Int {
-        val pool = (0 until poolSize).toMutableList()
-        var index = 0
-        val k = seq.size
-
-        for (i in 0 until k) {
-            val pos = pool.indexOf(seq[i])
-            val remaining = poolSize - i - 1
-            index += pos * permTable[remaining][k - i - 1]
-            pool.removeAt(pos)
-        }
-
-        return index
-    }
-
-    private fun powerTwoIndex(list: List<Int>): Int {
-        var result = 0
-        list.forEach { i ->
-            result = result*2 + i
-        }
-        return result
     }
 
     fun preCalculate() {
